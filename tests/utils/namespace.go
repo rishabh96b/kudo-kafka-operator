@@ -11,11 +11,11 @@ func (c *KubernetesTestClient) CreateNamespace(name string, updateIfExists bool)
 		Clientset.
 		CoreV1().
 		Namespaces().
-		Create(&v1.Namespace{
+		Create(c.Ctx, &v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: name,
 			},
-		})
+		}, metav1.CreateOptions{})
 	if err != nil && apierrors.IsAlreadyExists(err) && updateIfExists {
 		return c.UpdateNamespace(name)
 	}
@@ -27,11 +27,11 @@ func (c *KubernetesTestClient) UpdateNamespace(name string) (*v1.Namespace, erro
 		Clientset.
 		CoreV1().
 		Namespaces().
-		Update(&v1.Namespace{
+		Update(c.Ctx, &v1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: name,
 			},
-		})
+		}, metav1.UpdateOptions{})
 }
 
 func (c *KubernetesTestClient) DeleteNamespace(name string) error {
@@ -41,7 +41,7 @@ func (c *KubernetesTestClient) DeleteNamespace(name string) error {
 		Clientset.
 		CoreV1().
 		Namespaces().
-		Delete(name, &metav1.DeleteOptions{
+		Delete(c.Ctx, name, metav1.DeleteOptions{
 			PropagationPolicy:  &deletePolicy,
 			GracePeriodSeconds: &deleteGracePeriod,
 		})

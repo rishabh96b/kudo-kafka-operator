@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -35,12 +36,13 @@ const (
 var (
 	kubeconfig    = os.Getenv("KUBECONFIG")
 	client, _     = GetKubernetesClient()
-	KClient       = &KubernetesTestClient{client}
+	KClient       = &KubernetesTestClient{client, context.TODO()}
 	KubeConfig, _ = BuildKubeConfig(kubeconfig)
 )
 
 type KubernetesTestClient struct {
 	*kubernetes.Clientset
+	Ctx context.Context
 }
 
 func BuildKubeConfig(kubeconfig string) (*rest.Config, error) {
@@ -68,15 +70,15 @@ func GetKubernetesClient() (*kubernetes.Clientset, error) {
 }
 
 func (c *KubernetesTestClient) createSecret(name string, data []string, namespace string) {
-	c.CoreV1().Secrets(namespace).Create(&v1.Secret{
+	c.CoreV1().Secrets(namespace).Create(c.Ctx, &v1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 		},
 		StringData: map[string]string{
 			data[0]: data[1],
 		},
-	})
-	_, err := c.CoreV1().Secrets(namespace).List(metav1.ListOptions{})
+	}, metav1.CreateOptions{})
+	_, err := c.CoreV1().Secrets(namespace).List(c.Ctx, metav1.ListOptions{})
 	if err != nil {
 		log.Warningf("%v", err)
 	}
@@ -174,7 +176,7 @@ func (c *KubernetesTestClient) CheckIfPodExists(name, namespace string) bool {
 }
 
 func (c *KubernetesTestClient) GetPod(name, namespace string) (*v1.Pod, error) {
-	return c.CoreV1().Pods(namespace).Get(name, metav1.GetOptions{})
+	return c.CoreV1().Pods(namespace).Get(c.Ctx, name, metav1.GetOptions{})
 }
 
 func (c *KubernetesTestClient) GetStatefulSetCount(name, namespace string) int {
@@ -198,7 +200,7 @@ func (c *KubernetesTestClient) GetStatefulSetReadyReplicasCount(name, namespace 
 }
 
 func (c *KubernetesTestClient) GetStatefulSet(name, namespace string) *apps_v1.StatefulSet {
-	statefulSet, err := c.AppsV1().StatefulSets(namespace).Get(name, metav1.GetOptions{})
+	statefulSet, err := c.AppsV1().StatefulSets(namespace).Get(c.Ctx, name, metav1.GetOptions{})
 	if err != nil {
 		log.Warningf("%v", err)
 		return nil
@@ -207,7 +209,7 @@ func (c *KubernetesTestClient) GetStatefulSet(name, namespace string) *apps_v1.S
 }
 
 func (c *KubernetesTestClient) ListStatefulSets(namespace string) {
-	statefulSets, err := c.AppsV1beta2().StatefulSets(namespace).List(metav1.ListOptions{})
+	statefulSets, err := c.AppsV1beta2().StatefulSets(namespace).List(c.Ctx, metav1.ListOptions{})
 	if err != nil {
 		log.Warningf("%v", err)
 	}
@@ -216,7 +218,7 @@ func (c *KubernetesTestClient) ListStatefulSets(namespace string) {
 
 func (c *KubernetesTestClient) GetServices(name string, namespace string) *v1.ServiceList {
 	listOptions := metav1.ListOptions{FieldSelector: fmt.Sprintf("metadata.name=%s", name)}
-	services, err := c.CoreV1().Services(namespace).List(listOptions)
+	services, err := c.CoreV1().Services(namespace).List(c.Ctx, listOptions)
 	if err != nil {
 		log.Fatalf("Error listing services for [%s] in namespace [%s]: %v", name, namespace, err.Error())
 	}
@@ -298,13 +300,13 @@ func Retry(attempts int, sleep time.Duration, condition string, f func() (string
 }
 
 func (c *KubernetesTestClient) DeletePVCs(containsString string) error {
-	pvcs, err := c.CoreV1().PersistentVolumeClaims("").List(metav1.ListOptions{})
+	pvcs, err := c.CoreV1().PersistentVolumeClaims("").List(c.Ctx, metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 	for _, pvc := range pvcs.Items {
 		if strings.Contains(pvc.GetName(), containsString) {
-			err = c.CoreV1().PersistentVolumeClaims(pvc.GetNamespace()).Delete(pvc.GetName(), &metav1.DeleteOptions{})
+			err = c.CoreV1().PersistentVolumeClaims(pvc.GetNamespace()).Delete(c.Ctx, pvc.GetName(), metav1.DeleteOptions{})
 			if err != nil {
 				return err
 			}

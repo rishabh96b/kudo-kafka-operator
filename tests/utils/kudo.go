@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 	"strconv"
@@ -21,7 +22,7 @@ var (
 
 func (c *KubernetesTestClient) GetInstancesInNamespace(namespace string) (*v1beta1.InstanceList, error) {
 	instancesClient := kudoClient.KudoV1beta1().Instances(namespace)
-	instancesList, err := instancesClient.List(metav1.ListOptions{})
+	instancesList, err := instancesClient.List(c.Ctx, metav1.ListOptions{})
 	if err != nil {
 		log.Errorf("error getting kudo instances in namespace kubernetes client: %v", err)
 		return nil, err
@@ -31,7 +32,7 @@ func (c *KubernetesTestClient) GetInstancesInNamespace(namespace string) (*v1bet
 
 func (c *KubernetesTestClient) GetParamForKudoInstance(name, namespace, param string) (string, error) {
 	instancesClient := kudoClient.KudoV1beta1().Instances(namespace)
-	instance, err := instancesClient.Get(name, metav1.GetOptions{})
+	instance, err := instancesClient.Get(c.Ctx, name, metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("error getting kudo instance in namespace kubernetes client: %v", err)
 		return "", err
@@ -45,7 +46,7 @@ func (c *KubernetesTestClient) GetParamForKudoInstance(name, namespace, param st
 }
 
 func (c *KubernetesTestClient) GetParamForKudoFrameworkVersion(ref corev1.ObjectReference, namespace, param string) (string, error) {
-	operatorVersion, err := kudoClient.KudoV1beta1().OperatorVersions(namespace).Get(ref.Name, metav1.GetOptions{})
+	operatorVersion, err := kudoClient.KudoV1beta1().OperatorVersions(namespace).Get(c.Ctx, ref.Name, metav1.GetOptions{})
 
 	if err != nil {
 		log.Errorf("error getting kudo operator version in namespace kubernetes client: %v", err)
@@ -62,13 +63,13 @@ func (c *KubernetesTestClient) GetParamForKudoFrameworkVersion(ref corev1.Object
 
 func (c *KubernetesTestClient) GetOperatorVersionForKudoInstance(name, namespace string) (string, error) {
 	instancesClient := kudoClient.KudoV1beta1().Instances(namespace)
-	instance, err := instancesClient.Get(name, metav1.GetOptions{})
+	instance, err := instancesClient.Get(c.Ctx, name, metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("error getting kudo instance in namespace kubernetes client: %v", err)
 		return "", err
 	}
 
-	operatorVersion, err := kudoClient.KudoV1beta1().OperatorVersions(namespace).Get(instance.Spec.OperatorVersion.Name, metav1.GetOptions{})
+	operatorVersion, err := kudoClient.KudoV1beta1().OperatorVersions(namespace).Get(c.Ctx, instance.Spec.OperatorVersion.Name, metav1.GetOptions{})
 
 	if err != nil {
 		log.Errorf("error getting kudo operator version in namespace kubernetes client: %v", err)
@@ -82,14 +83,14 @@ func (c *KubernetesTestClient) GetOperatorVersionForKudoInstance(name, namespace
 
 func (c *KubernetesTestClient) UpdateInstancesCount(name, namespace string, count int) error {
 	_, err := Retry(3, 0*time.Second, EMPTY_CONDITION, func() (string, error) {
-		return updateInstancesCount(name, namespace, count)
+		return updateInstancesCount(c.Ctx, name, namespace, count)
 	})
 	return err
 }
 
-func updateInstancesCount(name, namespace string, count int) (string, error) {
+func updateInstancesCount(ctx context.Context, name, namespace string, count int) (string, error) {
 	instancesClient := kudoClient.KudoV1beta1().Instances(namespace)
-	instance, err := instancesClient.Get(name, metav1.GetOptions{})
+	instance, err := instancesClient.Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("error getting kudo instance in namespace %s for instance %s kubernetes client: %v", namespace, name, err)
 		return "", err
@@ -102,9 +103,8 @@ func updateInstancesCount(name, namespace string, count int) (string, error) {
 	log.Printf("Instance: %+v\n", instance)
 	params["BROKER_COUNT"] = strconv.Itoa(count)
 	instance.Spec.Parameters = params
-	instance.Spec.PlanExecution.PlanName = "deploy"
 
-	_, err = instancesClient.Update(instance)
+	_, err = instancesClient.Update(ctx, instance, metav1.UpdateOptions{})
 	if err != nil {
 		log.Errorf("error updating kudo instance in namespace %s for instance %s kubernetes client: %v", namespace, name, err)
 		return "", err
@@ -115,14 +115,14 @@ func updateInstancesCount(name, namespace string, count int) (string, error) {
 
 func (c *KubernetesTestClient) UpdateInstanceParams(name, namespace string, mapParam map[string]string) error {
 	_, err := Retry(3, 0*time.Second, EMPTY_CONDITION, func() (string, error) {
-		return updateInstanceParams(name, namespace, mapParam)
+		return updateInstanceParams(c.Ctx, name, namespace, mapParam)
 	})
 	return err
 }
 
-func updateInstanceParams(name, namespace string, mapParam map[string]string) (string, error) {
+func updateInstanceParams(ctx context.Context, name, namespace string, mapParam map[string]string) (string, error) {
 	instancesClient := kudoClient.KudoV1beta1().Instances(namespace)
-	instance, err := instancesClient.Get(name, metav1.GetOptions{})
+	instance, err := instancesClient.Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("error getting kudo instance in namespace %s for instance %s kubernetes client: %v", namespace, name, err)
 		return "", err
@@ -136,9 +136,8 @@ func updateInstanceParams(name, namespace string, mapParam map[string]string) (s
 		params[k] = v
 	}
 	instance.Spec.Parameters = params
-	instance.Spec.PlanExecution.PlanName = "deploy"
 
-	_, err = instancesClient.Update(instance)
+	_, err = instancesClient.Update(ctx, instance, metav1.UpdateOptions{})
 	if err != nil {
 		log.Errorf("error updating kudo instance in namespace %s for instance %s kubernetes client: %v", namespace, name, err)
 		return "", err
@@ -230,7 +229,7 @@ func (c *KubernetesTestClient) WaitForStatus(name, namespace string, expectedSta
 
 func (c *KubernetesTestClient) GetPlanStatusForInstance(name, namespace string) (v1beta1.ExecutionStatus, error) {
 	instancesClient := kudoClient.KudoV1beta1().Instances(namespace)
-	instance, err := instancesClient.Get(name, metav1.GetOptions{})
+	instance, err := instancesClient.Get(c.Ctx, name, metav1.GetOptions{})
 	if err != nil {
 		log.Errorf("error getting kudo instance in namespace %s for instance %s kubernetes client: %v", namespace, name, err)
 		return "", err

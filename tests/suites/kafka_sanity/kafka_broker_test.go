@@ -113,7 +113,7 @@ var _ = Describe("KafkaTest", func() {
 			It("verify that access mode is ReadWriteOnce", func() {
 				err := utils.KClient.WaitForStatefulSetReadyReplicasCount(DefaultKafkaStatefulSetName, customNamespace, 3, utils.DefaultStatefulReadyWaitSeconds)
 				Expect(err).To(BeNil())
-				sts, err := utils.KClient.AppsV1().StatefulSets(customNamespace).Get(DefaultKafkaStatefulSetName, metav1.GetOptions{})
+				sts, err := utils.KClient.AppsV1().StatefulSets(customNamespace).Get(utils.KClient.Ctx, DefaultKafkaStatefulSetName, metav1.GetOptions{})
 				Expect(err).To(BeNil())
 				Expect(len(sts.Spec.VolumeClaimTemplates)).To(BeNumerically("==", 1))
 				for _, pvc := range sts.Spec.VolumeClaimTemplates {
