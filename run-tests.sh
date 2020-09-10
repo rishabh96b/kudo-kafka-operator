@@ -7,7 +7,7 @@ kafka_repo_root="$(realpath "$(dirname "$0")")"
 vendor_dir="${kafka_repo_root}/shared/vendor"
 operators_repo_root="$(realpath $1)"
 zk_operator_dir=${operators_repo_root}/repository/zookeeper/operator
-kafka_operator_dir=${operators_repo_root}/repository/kafka/operator
+kafka_operator_dir=${kafka_repo_root}/operator
 
 echo "Starting the tests with framework resources:"
 ls ${operators_repo_root}
