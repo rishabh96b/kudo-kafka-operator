@@ -13,6 +13,9 @@ function print_help() {
 
 source versions.sh
 
+BUILD_KAFKA="false"
+BUILD_CRUISE="false"
+BUILD_SCALE="false"
 PUSH_IMAGE="false"
 IMAGE_NAME="all"
 for arg in "$@"
@@ -37,12 +40,16 @@ case ${IMAGE_NAME} in
 all)
   BUILD_KAFKA="true"
   BUILD_CRUISE="true"
+  BUILD_SCALE="true"
   ;;
 kafka)
   BUILD_KAFKA="true"
   ;;
 cruise-control)
   BUILD_CRUISE="true"
+  ;;
+scale)
+  BUILD_SCALE="true"
   ;;
 *)
   echo "cannot build image $IMAGE_NAME"
@@ -58,6 +65,9 @@ if [[ "${BUILD_CRUISE}" == "true" ]]; then
   docker image build --build-arg CRUISE_CONTROL_VERSION=${CRUISE_CONTROL_VERSION} --build-arg CRUISE_CONTROL_UI_VERSION=${CRUISE_CONTROL_UI_VERSION} \
     -t mesosphere/cruise-control:${CRUISE_CONTROL_TAG_VERSION} ./cruise-control
 fi
+if [[ "${BUILD_SCALE}" == "true" ]]; then
+  docker image build -t mesosphere/kafka-workload:${KAFKA_TAG_VERSION} ./scaletesting
+fi
 
 if [[ "${PUSH_IMAGE}" == "true" ]]; then
   if [[ "${BUILD_CRUISE}" == "true" ]]; then
@@ -65,6 +75,9 @@ if [[ "${PUSH_IMAGE}" == "true" ]]; then
   fi
   if [[ "${BUILD_KAFKA}" == "true" ]]; then
     docker push mesosphere/kafka:${KAFKA_TAG_VERSION}
+  fi
+  if [[ "${BUILD_SCALE}" == "true" ]]; then
+    docker push mesosphere/kafka-workload:${KAFKA_TAG_VERSION}
   fi
 else
   echo "Image built successfully."
