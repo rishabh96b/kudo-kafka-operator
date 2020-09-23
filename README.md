@@ -1,56 +1,49 @@
-# Run KUDO-Kafka tests
+![kudo-kafka](./docs/resources/images/kudo-kafka.png)
 
-## Requirements
+# KUDO Kafka Operator
 
-- A running Kubernetes cluster with `$KUBECONFIG` pointing to correct configuration
-- KUDO controller running in the Kubernetes cluster
-- `kubectl` installed, with `$KUBECTL_PATH` pointing to it 
-- The https://github.com/kudobuilder/operators repository checked out (as a best practice, that should be inside of your $GOPATH)
+The KUDO Kafka operator creates, configures and manages [Apache Kafka](https://kafka.apache.org/) clusters running on Kubernetes.
 
-## Running tests
+### Overview
 
-Export `DS_KUDO_VERSION`, `KUBECONFIG` and `KUBECTL_PATH`, and run the `run-tests.sh` script.
+KUDO Kafka is a Kubernetes operator built on [KUDO](kudo.dev) to manage Apache Kafka in a scalable, repeatable, and standardized way over Kubernetes. Currently KUDO Kafka supports:
 
-Example:
+- Securing the cluster in various ways: TLS encryption, Kerberos authentication, Kafka AuthZ
+- Prometheus metrics right out of the box with example Grafana dashboards
+- Kerberos support
+- Graceful rolling updates for any cluster configuration changes
+- Graceful rolling upgrades when upgrading the operator version
+- External access through LB/Nodeports
+- Mirror-maker integration
+- Cruise Control integration
+- Connect integration
 
-```bash
-export DS_KUDO_VERSION=v0.5.0
-export KUBECTL_PATH=/usr/local/bin/kubectl
-export KUBECONFIG=${HOME}/.kubeconfig/config
-./run-tests.sh /path/to/kudobuilder/operators
-```
+To get more information around KUDO Kafka architecture please take a look on the [KUDO Kafka concepts](./docs/concepts.md) document.
 
-## Development
+## Getting started
 
-### Submodules
+The latest stable version of Kafka operator is `1.3.2`
+For more details, please see the [docs](./docs/) folder.
 
-This repository includes some tooling shared by various KUDO operators, as a
-git submodule from the private data-services-kudo repository.
+## Testing Features
 
-https://git-scm.com/book/en/v2/Git-Tools-Submodules contains some useful
-information about how to work with submodules.
+You can also test some of key features of KUDO Kafka present in [features runbook](./docs/features-runbooks.md).
 
-### Go modules
-In this project we always aim to target one version of Kubernetes API and use `replace` for kubernetes client/api modules. 
 
-In case for kubernetes 1.16.2, it would be 
-```
-curl -s https://proxy.golang.org/k8s.io/api/@v/kubernetes-1.16.2.info | jq -r .Version
-curl -s https://proxy.golang.org/k8s.io/apimachinery/@v/kubernetes-1.16.2.info | jq -r .Version
-curl -s https://proxy.golang.org/k8s.io/client-go/@v/kubernetes-1.16.2.info | jq -r .Version
-```
+## Releases
 
-with next output:
-```
-v0.0.0-20191016110408-35e52d86657a
-v0.0.0-20191004115801-a2eda9f80ab8
-v0.0.0-20191016111102-bec269661e48
-```
+| KUDO Kafka | Apache Kafka | Minimum KUDO Version |
+| ---------- | ------------ | -------------------- |
+| 1.2.1      | 2.4.1        | 0.11.0               |
+| 1.3.0      | 2.5.0        | 0.11.0               |
+| 1.3.1      | 2.5.0        | 0.13.0               |
+| **1.3.2**  | **2.5.1**    | **0.14.0**           |
 
-and we can use them in the `go.mod`
 
-```
-replace k8s.io/api => k8s.io/api v0.0.0-20191016110408-35e52d86657a
-replace k8s.io/apimachinery => k8s.io/apimachinery v0.0.0-20191004115801-a2eda9f80ab8
-replace k8s.io/client-go => k8s.io/client-go v0.0.0-20191016111102-bec269661e48
-```
+## Unreleased version
+
+| KUDO Kafka | Apache Kafka | Minimum KUDO Version |
+| ---------- | ------------ | -------------------- |
+| 1.3.3      | 2.6.0        | 0.14.0               |
+
+
