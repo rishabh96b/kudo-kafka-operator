@@ -1,0 +1,81 @@
+apiVersion: kudo.dev/v1beta1
+parameters:
+  - name: NODE_COUNT
+    default: "1"
+  - name: CPUS
+    description: "CPUs (request) for the Kafka Connect pods. spec.containers[].resources.requests.cpu"
+    default: "500m"
+  - name: CPUS_LIMIT
+    description: "CPUs (limit) for the Kafka Connect pods. spec.containers[].resources.limits.cpu"
+    default: "500m"
+  - name: MEM
+    description: "Memory (request) for the Kafka Connect pods. spec.containers[].resources.requests.memory"
+    default: "2048Mi"
+  - name: MEM_LIMIT
+    description: "Memory (limit) for the Kafka Connect pods. spec.containers[].resources.limits.memory"
+    default: "2048Mi"
+  - name: REST_PORT
+    description: "Port for the REST API server to listen to."
+    default: 8083
+  - name: KEY_CONVERTER
+    description: "The key converters specify the format of data in Kafka message key and how to translate it into Connect data"
+    default: "org.apache.kafka.connect.json.JsonConverter"
+  - name: VALUE_CONVERTER
+    description: "The value converter specify the format of data in Kafka message value and how to translate it into Connect data"
+    default: "org.apache.kafka.connect.json.JsonConverter"
+  - name: OFFSET_FLUSH_INTERVAL_MS
+    description: "Kafka Connect topic offset flush interval in milliseconds"
+    default: 100
+  - name: PIPELINE_TOPIC
+    description: "Kafka topic used for the pipeline topic"
+    default: 100
+    ########################################################################
+    ######## SOURCE CONFIGURATION PARAMETERS ###############################
+    ########################################################################
+  - name: SOURCE_TYPE
+    description: "Pipeline source type, default is Cassandra"
+    default: cassandra
+
+    ########################################################################
+    ######## SINK CONFIGURATION PARAMETERS #################################
+    #######################################################################
+  - name: SINK_TYPE
+    description: "Pipeline sink type, default is Cassandra"
+    default: cassandra
+
+
+    ########################################################################
+    ######## CASSANDRA CONNECTOR CONFIGURATION #############################
+    ########################################################################
+  - name: CASSANDRA_ENDPOINT
+    description: "cassandra endpoint"
+    default: "cassandra-node-0.cassandra-svc.default.svc.cluster.local,cassandra-node-1.cassandra-svc.default.svc.cluster.local,cassandra-node-2.cassandra-svc.default.svc.cluster.local
+      9042"
+  - name: CASSANDRA_KEYSPACE
+    description: "cassandra default keyspace"
+    default: demo
+  - name: CASSANDRA_TABLE
+    description: "cassandra default table"
+    default: demo
+  - name: CASSANDRA_KCQL
+    description: "cassandra default table"
+    default: "INSERT INTO orders-topic SELECT * FROM demo PK created INCREMENTALMODE=TIMEUUID"
+    ########################################################################
+    ######## MYSQL CONNECTOR CONFIGURATION #################################
+    ########################################################################
+  - name: MYSQL_PORT
+    description: "mysql default port"
+    default: 3306
+  - name: MYSQL_USER
+    description: "mysql user"
+    default: demo
+  - name: MYSQL_PW
+    description: "mysql pw"
+    default: demo
+  - name: MYSQL_DATABASE
+    description: "mysql database"
+    default: demo
+  - name: MYSQL_ENDPOINT
+    description: "mysql endpoint"
+    default: mysql.default.svc.cluster.local
+

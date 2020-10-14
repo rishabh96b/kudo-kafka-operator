@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-{{ .Name }}
+data:
+  cassandra.yaml: |
+    port: {{ .Params.CASSANDRA_ENDPOINT }}
+    user: {{ .Params.CASSANDRA_KEYSPACE }}
+    pw: {{ .Params.MYSQL_PW }}
+    database: {{ .Params.CASSANDRA_TABLE }}
+    endpoint: {{ .Params.CASSANDRA_KCQL }}

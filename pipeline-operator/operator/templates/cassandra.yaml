@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cassandra-{{ .Name }}
+data:
+  cassandra.yaml: |
+    endpoint: {{ .Params.CASSANDRA_ENDPOINT }}
+    keyspace: {{ .Params.CASSANDRA_KEYSPACE }}
+    table: {{ .Params.CASSANDRA_TABLE }}
+    kcql: {{ .Params.CASSANDRA_KCQL }}
