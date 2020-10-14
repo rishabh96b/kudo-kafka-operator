@@ -1,0 +1,19 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+  - command: kubectl delete deployment kafka-cluster-producer-tests --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete deployment kafka-cluster-consumer-tests --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete deployment utils-pod --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete instance zookeeper-instance --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete instance kafka-instance --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete operatorversion --all --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete operator kafka --namespace kafka-mwt
+    ignoreFailure: true
+  - command: kubectl delete operator zookeeper --namespace kafka-mwt
+    ignoreFailure: true

@@ -1,0 +1,7 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utils-pod
+  namespace: kafka-mwt
+status:
+  readyReplicas: 1

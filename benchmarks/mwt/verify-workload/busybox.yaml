@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utils-pod
+  namespace: kafka-mwt
+  labels:
+    app: busybox
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+        - name: tools
+          image: giantswarm/tiny-tools
+          imagePullPolicy: Always
+          command: ['sh', '-c', 'while true; do sleep 300; done;']

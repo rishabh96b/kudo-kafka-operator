@@ -1,0 +1,24 @@
+apiVersion: kudo.dev/v1beta1
+kind: Instance
+metadata:
+  name: kafka-instance
+  namespace: kafka-mwt
+
+---
+apiVersion: kudo.dev/v1beta1
+kind: Instance
+metadata:
+  name: zookeeper-instance
+  namespace: kafka-mwt
+
+---
+apiVersion: kudo.dev/v1beta1
+kind: OperatorVersion
+metadata:
+  namespace: kafka-mwt
+
+---
+apiVersion: kudo.dev/v1beta1
+kind: Operator
+metadata:
+  namespace: kafka-mwt

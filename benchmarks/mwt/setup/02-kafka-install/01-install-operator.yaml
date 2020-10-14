@@ -1,0 +1,6 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+  - command: kubectl kudo install kafka --skip-instance --namespace kafka-mwt
+    ignoredFailure: true
+    # kubectl kudo install /Users/zain/go/src/github.com/kudobuilder/operators/repository/kafka --skip-instance --namespace kafka-mwt

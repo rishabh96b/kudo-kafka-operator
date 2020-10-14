@@ -1,0 +1,5 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestStep
+commands:
+  - command: kubectl kudo install kafka --namespace kafka-mwt -P ${KAFKA_PARAMETER_FILE}.yaml
+    ignoredFailure: true
