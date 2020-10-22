@@ -19,7 +19,7 @@ spec:
       containers:
       - name: cruise-control
         image: mesosphere/cruise-control:2.0.77-1.3.0
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Params.CRUISE_CONTROL_IMAGE_PULL_POLICY }}
         ports:
         - name: http
           containerPort: {{ .Params.CRUISE_CONTROL_PORT }}

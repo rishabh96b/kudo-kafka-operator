@@ -814,6 +814,12 @@ parameters:
     description: "These metrics prometheus rules to be used instead of the default metrics rules."
     required: false
     trigger: "update-instance"
+  - name: KAFKA_IMAGE_PULL_POLICY
+    description: "Kafka container image pull policy"
+    default: "Always"
+  - name: KAFKA_WORKLOAD_IMAGE_PULL_POLICY
+    description: "Kafka workload container image pull policy"
+    default: "Always"
   - name: MIRROR_MAKER_ENABLED
     default: "false"
     trigger: "mirrormaker"
@@ -910,6 +916,9 @@ parameters:
     description: "Kafka Connect topic offset flush interval in milliseconds"
     default: 10000
     trigger: "kafka-connect"
+  - name: KAFKA_CONNECT_IMAGE_PULL_POLICY
+    description: "Kafka Connect container image pull policy"
+    default: "Always"
   - name: ENABLE_CRUISE_CONTROL
     description: "Enable cruise control for the current KUDO Kafka cluster"
     default: "false"
@@ -942,3 +951,6 @@ parameters:
     description: "Cruise Control REST Web UI default path prefix"
     default: "/*"
     trigger: "cruise-control"
+  - name: CRUISE_CONTROL_IMAGE_PULL_POLICY
+    description: "Cruise Control container image pull policy"
+    default: "Always"

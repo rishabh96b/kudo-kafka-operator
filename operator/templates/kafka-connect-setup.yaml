@@ -14,7 +14,7 @@ spec:
       containers:
       - name: kafka-connect-setup
         image: shubhanilbag/kafka:2.4.0-1.3.0
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Params.KAFKA_CONNECT_IMAGE_PULL_POLICY }}
         resources:
           requests:
             cpu: 100m

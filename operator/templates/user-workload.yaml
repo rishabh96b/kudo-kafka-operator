@@ -18,7 +18,7 @@ spec:
       containers:
       - name: kafka-ultron-loader
         image: mesosphere/kafka:workload
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Params.KAFKA_WORKLOAD_IMAGE_PULL_POLICY }}
         command:
         - /opt/kafka/run_producer_test.sh
         env:
