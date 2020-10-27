@@ -9,6 +9,7 @@ type Environment interface {
 	GetNamespace() string
 	GetExternalIngressPort() string
 	GetNodeName() string
+	GetNodePortIPType() string
 }
 
 type EnvironmentImpl struct{}
@@ -27,4 +28,8 @@ func (c *EnvironmentImpl) GetExternalIngressPort() string {
 
 func (c *EnvironmentImpl) GetNodeName() string {
 	return os.Getenv("NODE_NAME")
+}
+
+func (c *EnvironmentImpl) GetNodePortIPType() string {
+	return os.Getenv("EXTERNAL_NODEPORT_IP_TYPE")
 }

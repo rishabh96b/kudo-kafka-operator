@@ -5,6 +5,10 @@ kind: Service
 metadata:
   name: {{ $.Name }}-kafka-{{ $v }}-external
   namespace: {{ $.Namespace }}
+  {{- if $.Params.EXTERNAL_SERVICE_ANNOTATIONS }}
+  annotations:
+    {{ toYaml (index $.Params.EXTERNAL_SERVICE_ANNOTATIONS $v)  }}
+  {{- end }}
 spec:
   type: {{ $.Params.EXTERNAL_ADVERTISED_LISTENER_TYPE }}
   externalTrafficPolicy: Local

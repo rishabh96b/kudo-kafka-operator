@@ -147,6 +147,8 @@ spec:
               value: "{{ .Params.CLIENT_PORT }}"
             - name: EXTERNAL_INGRESS_PORT
               value: "{{ .Params.EXTERNAL_ADVERTISED_LISTENER_PORT }}"
+            - name: EXTERNAL_NODEPORT_IP_TYPE
+              value: "{{ .Params.EXTERNAL_NODEPORT_IP_TYPE }}"
             - name: NAMESPACE
               valueFrom:
                 fieldRef:

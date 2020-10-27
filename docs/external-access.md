@@ -257,4 +257,24 @@ inter.broker.listener.name=INTERNAL
 [ ... lines removed for clarity ...]
 ```
 
-##### 
+# External-dns and third-party annotations
+
+KUDO Kafka supports adding annotations to the services created for external access.
+
+For example for external-dns, user can use the parameter `EXTERNAL_SERVICE_ANNOTATIONS` with value:
+
+```
+- external-dns.alpha.kubernetes.io/hostname: my-broker-0.example.org
+- external-dns.alpha.kubernetes.io/hostname: my-broker-1.example.org
+- external-dns.alpha.kubernetes.io/hostname: my-broker-2.example.org
+```
+
+This will add the annotation to first three services used for external access. If the KUDO Kafka cluster is of 5 brokers, the parameter value will look like:
+
+```
+- external-dns.alpha.kubernetes.io/hostname: my-broker-0.example.org
+- external-dns.alpha.kubernetes.io/hostname: my-broker-1.example.org
+- external-dns.alpha.kubernetes.io/hostname: my-broker-2.example.org
+- external-dns.alpha.kubernetes.io/hostname: my-broker-3.example.org
+- external-dns.alpha.kubernetes.io/hostname: my-broker-4.example.org
+```

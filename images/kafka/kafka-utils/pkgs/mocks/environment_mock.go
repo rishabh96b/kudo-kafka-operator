@@ -5,9 +5,9 @@
 package mocks
 
 import (
-	"github.com/golang/mock/gomock"
+	reflect "reflect"
 
-	"reflect"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockEnvironment is a mock of Environment interface
@@ -87,4 +87,18 @@ func (m *MockEnvironment) GetNodeName() string {
 func (mr *MockEnvironmentMockRecorder) GetNodeName() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNodeName", reflect.TypeOf((*MockEnvironment)(nil).GetNodeName))
+}
+
+// GetNodePortIPType mocks base method
+func (m *MockEnvironment) GetNodePortIPType() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNodePortIPType")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetNodePortIPType indicates an expected call of GetNodePortIPType
+func (mr *MockEnvironmentMockRecorder) GetNodePortIPType() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNodePortIPType", reflect.TypeOf((*MockEnvironment)(nil).GetNodePortIPType))
 }

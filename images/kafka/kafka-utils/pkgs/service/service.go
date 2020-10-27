@@ -85,16 +85,33 @@ func (c *KafkaService) WriteIngressToPath(path string) error {
 			}
 		case v1.ServiceTypeNodePort:
 			log.Infoln("detected ", v1.ServiceTypeNodePort)
-			externalIP, err := c.getNodeExternalIP()
-			if err != nil {
-				return err
-			}
-			log.Infoln("detected ExternalIP: ", externalIP)
-			ingressStatus = []v1.LoadBalancerIngress{
-				{
-					IP:       externalIP,
-					Hostname: "",
-				},
+			switch c.Env.GetNodePortIPType() {
+			case "EXTERNAL":
+				externalIP, err := c.getNodeExternalIP()
+				if err != nil {
+					return err
+				}
+				log.Infoln("detected ExternalIP: ", externalIP)
+				ingressStatus = []v1.LoadBalancerIngress{
+					{
+						IP:       externalIP,
+						Hostname: "",
+					},
+				}
+			case "INTERNAL":
+				externalIP, err := c.getNodeInternalIP()
+				if err != nil {
+					return err
+				}
+				log.Infoln("detected InternalIP: ", externalIP)
+				ingressStatus = []v1.LoadBalancerIngress{
+					{
+						IP:       externalIP,
+						Hostname: "",
+					},
+				}
+			default:
+				return fmt.Errorf("NodePortIPType '%s' not supported", c.Env.GetNodePortIPType())
 			}
 			for _, port := range kafkaService.Spec.Ports {
 				c.Port = port.NodePort
@@ -189,6 +206,7 @@ func (c *KafkaService) writeListenerSecurityProtocolMap(ingresses []v1.LoadBalan
 	log.Infof("created the %s file", path)
 	return nil
 }
+
 func (c *KafkaService) getNodeExternalIP() (string, error) {
 	node, err := c.Client.CoreV1().Nodes().Get(c.Env.GetNodeName(), metav1.GetOptions{})
 	if err != nil {
@@ -200,8 +218,23 @@ func (c *KafkaService) getNodeExternalIP() (string, error) {
 			return address.Address, nil
 		}
 	}
-	return "", fmt.Errorf("no node found with name '%s'", c.Env.GetNodeName())
+	return "", fmt.Errorf("no external IP found for node '%s'", c.Env.GetNodeName())
 }
+
+func (c *KafkaService) getNodeInternalIP() (string, error) {
+	node, err := c.Client.CoreV1().Nodes().Get(c.Env.GetNodeName(), metav1.GetOptions{})
+	if err != nil {
+		log.Errorf("error fetching nodes internal IP :%s", err)
+		return "", err
+	}
+	for _, address := range node.Status.Addresses {
+		if address.Type == v1.NodeInternalIP {
+			return address.Address, nil
+		}
+	}
+	return "", fmt.Errorf("no internal IP found for node '%s'", c.Env.GetNodeName())
+}
+
 func (c *KafkaService) writeListenerDNS(ingresses []v1.LoadBalancerIngress, path string) error {
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {

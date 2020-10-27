@@ -2,6 +2,11 @@
 
 ## latest
 
+- Support node internal IP for external access
+- Support annotations for external access services
+
+## v1.3.2
+
 - Apache Kafka upgraded to 2.5.1
 
 ## v1.3.1

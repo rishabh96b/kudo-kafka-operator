@@ -558,6 +558,18 @@ parameters:
     default: "30902"
     displayName: "External Node Port starting value."
     trigger: "external-access"
+  - name: EXTERNAL_NODEPORT_IP_TYPE
+    default: "EXTERNAL"
+    description: |
+        Nodeport IP Type, defines which IP type to use when using external access through Node Port.
+        when using default 'EXTERNAL' the external IP of the node will be used to populate the advertised.listeners
+        when using 'INTERNAL' the node internal IP will be added to advertised.listeners
+  - name: EXTERNAL_SERVICE_ANNOTATIONS
+    type: array
+    required: False
+    description: |
+      Custom annotations for the external services created for external access.
+    trigger: "external-access"
   - name: FETCH_PURGATORY_PURGE_INTERVAL_REQUESTS
     displayName: "fetch.purgatory.purge.interval.requests"
     description: "The purge interval (in number of requests) of the fetch request purgatory"
