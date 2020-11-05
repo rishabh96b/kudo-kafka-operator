@@ -2,6 +2,8 @@
 
 ## latest
 
+## v1.3.3
+
 - Support node internal IP for external access
 - Support annotations for external access services
 

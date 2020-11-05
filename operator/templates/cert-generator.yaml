@@ -7,7 +7,7 @@ spec:
   initContainers:
     - name: init
       {{ if eq .Params.USE_AUTO_TLS_CERTIFICATE "true" }}
-      image: mesosphere/kafka:1.1.0-2.4.0
+      image: mesosphere/kafka:2.5.1-1.3.3
       {{ else }}
       image: busybox:1.31.1
       {{ end }}

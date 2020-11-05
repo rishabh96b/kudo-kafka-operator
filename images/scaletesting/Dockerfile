@@ -1,4 +1,4 @@
-FROM mesosphere/kafka:2.5.1-1.3.1
+FROM mesosphere/kafka:2.5.1-1.3.3
 USER root
 ARG UNAME=kafka
 
