@@ -2,7 +2,7 @@ apiVersion: kuttl.dev/v1beta1
 kind: TestSuite
 commands:
   - command: kubectl-kudo init --unsafe-self-signed-webhook-ca --wait
-  - command: kubectl-kudo install --skip-instance --app-version=3.4.14 zookeeper
+  - command: kubectl-kudo install --skip-instance --operator-version=0.3.1 zookeeper
   - command: kubectl-kudo install --skip-instance ../operator/
 testDirs:
   - ./suites/

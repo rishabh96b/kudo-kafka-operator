@@ -240,7 +240,7 @@ var _ = Describe("KafkaTest", func() {
 				Expect(utils.KClient.GetStatefulSetCount(DefaultKafkaStatefulSetName, customNamespace)).To(Equal(3))
 			})
 			It("Check parameter value again", func() {
-				out, err := kafkaClient.ExecInPod(customNamespace, GetBrokerPodName(2), DefaultContainerName,
+				out, err := kafkaClient.ExecInPod(customNamespace, GetBrokerPodName(0), DefaultContainerName,
 					[]string{"grep", "log.retention.hours", "/var/lib/kafka/data/server.log"})
 				Expect(err).To(BeNil())
 				Expect(out).To(ContainSubstring(fmt.Sprintf("%s = %s", "log.retention.hours", "200")))
