@@ -82,11 +82,11 @@ The current configuration comes with two workloads types `small` and `large`
 `small` is intended to run in a KIND or local cluster. `large` is for a cluster that should be ready for production usage.
 
 ```
-kubectl kuttl workload-small/
+kubectl kuttl test workload-small/
 ```
 
 ```
-kubectl kuttl workload-large/
+kubectl kuttl test workload-large/
 ```
 
 These commands can be ran consequently and won't create a parallel workloads but would just change the size of workload. 
@@ -96,7 +96,7 @@ These commands can be ran consequently and won't create a parallel workloads but
 run the next command to setup the utils pod we will use for verification
 
 ```
-kubectl kuttl verify-workload/
+kubectl kuttl test verify-workload/
 ```
 
 Now that kuttl confirms that utils pod is up and ready, we can exec inside the pod to run verifications
