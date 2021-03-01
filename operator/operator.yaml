@@ -98,6 +98,11 @@ tasks:
       parameter: RUN_USER_WORKLOAD
       resources:
         - user-workload.yaml
+  - name: Zookeeper
+    kind: kudoOperator
+    spec:
+      package: "./components/zookeeper"
+      parameterFile: ./components/zookeeper/params.yaml
   # task used to restrict patching sts where it is not allowed
   - name: not-allowed
     kind: Dummy
@@ -107,6 +112,12 @@ plans:
   deploy:
     strategy: serial
     phases:
+      - name: deploy-zookeeper
+        strategy: serial
+        steps:
+          - name: install-zookeeper
+            tasks:
+              - install-zookeeper
       - name: deploy-kafka
         strategy: serial
         steps:
