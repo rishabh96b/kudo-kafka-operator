@@ -1,14 +1,12 @@
 apiVersion: kudo.dev/v1beta1
 name: "zookeeper"
 operatorVersion: "0.3.3"
-kudoVersion: 0.10.0
+kudoVersion: 0.14.0
 appVersion: 3.6.2
 kubernetesVersion: 1.14.8
 maintainers:
-  - name: Alena Varkockova
-    email: avarkockova@mesosphere.com
-  - name: Tom Runyon
-    email: runyontr@gmail.com
+  - name: Rishabh Bohra
+    email: rishabhbohra01@gmail.com
 url: https://zookeeper.apache.org/
 tasks:
   - name: infra
