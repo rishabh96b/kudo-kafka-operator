@@ -98,7 +98,7 @@ tasks:
       parameter: RUN_USER_WORKLOAD
       resources:
         - user-workload.yaml
-  - name: Zookeeper
+  - name: install-zookeeper
     kind: kudoOperator
     spec:
       package: "./components/zookeeper"
